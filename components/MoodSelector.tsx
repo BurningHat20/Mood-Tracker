@@ -1,25 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import React from "react";
 import { motion } from "framer-motion";
 
 const moods = [
-  { emoji: "😊", label: "Happy" },
-  { emoji: "😐", label: "Neutral" },
-  { emoji: "😢", label: "Sad" },
-  { emoji: "😠", label: "Angry" },
-  { emoji: "😴", label: "Tired" },
-  { emoji: "😰", label: "Anxious" },
-  { emoji: "😌", label: "Relaxed" },
-  { emoji: "🥳", label: "Excited" },
-  { emoji: "🤔", label: "Confused" },
+  { emoji: "😊", label: "Happy", color: "#FFD700" },
+  { emoji: "😐", label: "Neutral", color: "#A9A9A9" },
+  { emoji: "😢", label: "Sad", color: "#4169E1" },
+  { emoji: "😠", label: "Angry", color: "#FF4500" },
+  { emoji: "😴", label: "Tired", color: "#8E44AD" },
+  { emoji: "😰", label: "Anxious", color: "#2ECC71" },
+  { emoji: "😌", label: "Relaxed", color: "#3498DB" },
+  { emoji: "🥳", label: "Excited", color: "#E74C3C" },
+  { emoji: "🤔", label: "Confused", color: "#F39C12" },
 ];
 
 interface MoodSelectorProps {
@@ -27,64 +20,32 @@ interface MoodSelectorProps {
 }
 
 const MoodSelector: React.FC<MoodSelectorProps> = ({ onSelectMood }) => {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [showPopup, setShowPopup] = useState(false);
-
-  const handleMoodClick = (mood: string) => {
-    setSelectedMood(mood);
-  };
-
-  const handleAddMood = () => {
-    if (selectedMood) {
-      onSelectMood(selectedMood);
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 2000); // Hide popup after 2 seconds
-      setSelectedMood(null);
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-4">
-        {moods.map(({ emoji, label }) => (
-          <motion.div
+    <div className="p-2 sm:p-4">
+      <motion.div
+        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        {moods.map(({ emoji, label, color }) => (
+          <motion.button
             key={label}
+            onClick={() => onSelectMood(`${emoji} ${label}`)}
+            className="relative w-full aspect-square rounded-lg shadow-md flex flex-col items-center justify-center transition-all duration-200"
+            style={{ backgroundColor: color }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button
-              onClick={() => handleMoodClick(`${emoji} ${label}`)}
-              variant={
-                selectedMood === `${emoji} ${label}` ? "default" : "outline"
-              }
-              className={`w-full h-24 flex flex-col items-center justify-center text-center ${
-                selectedMood === `${emoji} ${label}`
-                  ? "ring-2 ring-primary"
-                  : ""
-              }`}
-            >
-              <span className="text-4xl mb-2">{emoji}</span>
-              <span className="text-sm">{label}</span>
-            </Button>
-          </motion.div>
+            <span className="text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2">
+              {emoji}
+            </span>
+            <span className="text-xs sm:text-sm font-semibold text-white">
+              {label}
+            </span>
+          </motion.button>
         ))}
-      </div>
-      <Button
-        onClick={handleAddMood}
-        disabled={!selectedMood}
-        className="w-full mt-4"
-      >
-        Add Mood
-      </Button>
-
-      <Dialog open={showPopup} onOpenChange={setShowPopup}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Mood Added Successfully!</DialogTitle>
-          </DialogHeader>
-          <p>Your mood has been recorded.</p>
-        </DialogContent>
-      </Dialog>
+      </motion.div>
     </div>
   );
 };
